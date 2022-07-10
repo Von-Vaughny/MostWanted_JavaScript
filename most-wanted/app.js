@@ -139,6 +139,7 @@ function displayPeople(people) {
  */
 function displayPerson(person) {
     const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
+    // Actually better to get the values.
     const personalInfoKeys = Object.keys(person).slice(1,9);
     let personInfo = "";
     for (let i = 0; i < personalInfo.length; i++){
@@ -200,50 +201,46 @@ function chars(input) {
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
 function findPersonFamily(person, people){
-    return searchForParents(person, people)
-
+    let personName = `${person.firstName} ${person.lastName}'s Family\n\n`;
+    let personParents = `Parent(s):${searchForParents(person, people)}\n`;
+    let personSpouse = `Spouse: ${searchForSpouse(person, people)}\n`;
+    let personSiblings = `Sibling(s):${searchForSiblings(person, people)}`;
+    return personName + personParents + personSpouse + personSiblings;
 }
 
 function searchForParents(person, people){
-    let personParents = [`${person.firstName} ${person.lastName} does not have any parents.`]
-    if (person.parents){
-        let parents = people.filter(function(el){
-            return person.parents.includes((el.id))
+    let personParents = ' None';
+    if (person.parents.length > 0){
+        personParents = people.filter(function(el){
+            return person.parents.includes(el.id);
+        }).map(function(el){
+            return ` ${el.firstName} ${el.lastName}`;
         });
-        for (let i = 0; i < parents.length; i++){
-            personParents[i] = `Parent's Name: ${parents[i].firstName} ${parents[i].lastName}\n`
-        }
     }
-    return personParents
+    return personParents;
 }
 
-/*function searchForSpouse(person, people){
-    let personSpouse = people.filter(function(familyMember){
-        if (person.currentSpouse = )
-    })
-}
+function searchForSpouse(person, people){
+    let personSpouse = 'None';
     if (person.currentSpouse){
-        let personSpouse = people.filter(function (familyMember){
-            if (familyMember.id === person.currentSpouse){
-                return `Sibling`
-            }
+        personSpouse = people.filter(function (el){
+            return el.id === person.currentSpouse;
+        }).map(function(el){
+            return `${el.firstName} ${el.lastName}`;
+        });
+    }
+    return personSpouse;
+}
+
+function searchForSiblings(person, people){
+    let personSiblings = ' None';
+    if (person.parents.length > 0){
+        personSiblings = people.filter(function(el){
+            return (el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1])) && el.id !== person.id;
+        }).map(function(el){
+            return ` ${el.firstName} ${el.lastName}`;
         })
     }
-    for (let i = 0; i < person.parents.length; i++) {
-        let personSiblings = people.filter(function (familyMember){
-            if (familyMember.parents[0] === person.parents[i] || familyMember.parents[1] === person.parents[i]){
-                return `Sibling's Name: ${familyMember.firstName} ${familyMember.lastName}`
-            }
-        });
-    }
-    personFamily += personParents;
-
-        
-
-
-
-
-    return personFamily;
+    return personSiblings
 }
-
 /*function searchById(id, people){}*/
