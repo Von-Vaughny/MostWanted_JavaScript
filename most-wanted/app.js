@@ -145,15 +145,16 @@ function displayPerson(person) {
         personInfo += `${personalInfo[i]}: ${person[personalInfoKeys[i]]}\n`;
     }
     /** 
-    * let personInfo = `First Name: ${person.firstName}\n`;
-    * personInfo += `Last Name: ${person.lastName}\n`;
-    * personInfo += `Gender: ${person.gender}\n`;
-    * personInfo += `DOB: ${person.dob}\n`;
-    * personInfo += `Height: ${person.height}\n`;
-    * personInfo += `Weight: ${person.weight}\n`;
-    * personInfo += `Eye Color: ${person.eyeColor}\n`;
-    * personInfo += `Occupation: ${person.occupation}`;
-    */
+     * Code w/o For Loop
+     * let personInfo = `First Name: ${person.firstName}\n`;
+     * personInfo += `Last Name: ${person.lastName}\n`;
+     * personInfo += `Gender: ${person.gender}\n`;
+     * personInfo += `DOB: ${person.dob}\n`;
+     * personInfo += `Height: ${person.height}\n`;
+     * personInfo += `Weight: ${person.weight}\n`;
+     * personInfo += `Eye Color: ${person.eyeColor}\n`;
+     * personInfo += `Occupation: ${person.occupation}`;
+     */
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
     return personInfo
 }
@@ -200,9 +201,20 @@ function chars(input) {
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
 function findPersonFamily(person, people){
     return searchForParents(person, people)
+
 }
 
 function searchForParents(person, people){
+    let personParents = [`${person.firstName} ${person.lastName} does not have any parents.`]
+    if (person.parents){
+        let parents = people.filter(function(el){
+            return person.parents.includes((el.id))
+        });
+        for (let i = 0; i < parents.length; i++){
+            personParents[i] = `Parent's Name: ${parents[i].firstName} ${parents[i].lastName}\n`
+        }
+    }
+    return personParents
 }
 
 /*function searchForSpouse(person, people){
