@@ -138,16 +138,24 @@ function displayPeople(people) {
  * @param {Object} person       A singular object.
  */
 function displayPerson(person) {
-    let personInfo = `First Name: ${person.firstName}\n`;
-    personInfo += `Last Name: ${person.lastName}\n`;
-    personInfo += `Gender: ${person.gender}\n`;
-    personInfo += `DOB: ${person.dob}\n`;
-    personInfo += `Height: ${person.height}\n`;
-    personInfo += `Weight: ${person.weight}\n`;
-    personInfo += `Eye Color: ${person.eyeColor}\n`
-    personInfo += `Occupation: ${person.occupation}`
+    const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
+    const personalInfoKeys = Object.keys(person).slice(1,9);
+    let personInfo = "";
+    for (let i = 0; i < personalInfo.length; i++){
+        personInfo += `${personalInfo[i]}: ${person[personalInfoKeys[i]]}\n`;
+    }
+    /** 
+    * let personInfo = `First Name: ${person.firstName}\n`;
+    * personInfo += `Last Name: ${person.lastName}\n`;
+    * personInfo += `Gender: ${person.gender}\n`;
+    * personInfo += `DOB: ${person.dob}\n`;
+    * personInfo += `Height: ${person.height}\n`;
+    * personInfo += `Weight: ${person.weight}\n`;
+    * personInfo += `Eye Color: ${person.eyeColor}\n`;
+    * personInfo += `Occupation: ${person.occupation}`;
+    */
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
-    alert(personInfo);
+    return personInfo
 }
 // End of displayPerson()
 
@@ -190,3 +198,40 @@ function chars(input) {
 
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
+function findPersonFamily(person, people){
+    return searchForParents(person, people)
+}
+
+function searchForParents(person, people){
+}
+
+/*function searchForSpouse(person, people){
+    let personSpouse = people.filter(function(familyMember){
+        if (person.currentSpouse = )
+    })
+}
+    if (person.currentSpouse){
+        let personSpouse = people.filter(function (familyMember){
+            if (familyMember.id === person.currentSpouse){
+                return `Sibling`
+            }
+        })
+    }
+    for (let i = 0; i < person.parents.length; i++) {
+        let personSiblings = people.filter(function (familyMember){
+            if (familyMember.parents[0] === person.parents[i] || familyMember.parents[1] === person.parents[i]){
+                return `Sibling's Name: ${familyMember.firstName} ${familyMember.lastName}`
+            }
+        });
+    }
+    personFamily += personParents;
+
+        
+
+
+
+
+    return personFamily;
+}
+
+/*function searchById(id, people){}*/
