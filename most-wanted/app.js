@@ -137,27 +137,26 @@ function displayPeople(people) {
  * in order to easily send the information to the user in the form of an alert().
  * @param {Object} person       A singular object.
  * @returns {String}            A string of the person's personal information.
+ * 
+ * Code w/o For Loop
+ * let personInfo = `First Name: ${person.firstName}\n`;
+ * personInfo += `Last Name: ${person.lastName}\n`;
+ * personInfo += `Gender: ${person.gender}\n`;
+ * personInfo += `DOB: ${person.dob}\n`;
+ * personInfo += `Height: ${person.height}\n`;
+ * personInfo += `Weight: ${person.weight}\n`;
+ * personInfo += `Eye Color: ${person.eyeColor}\n`;
+ * personInfo += `Occupation: ${person.occupation}`;
  */
 function displayPerson(person) {
     const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
     // Actually better to get the values.
+    //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
     const personalInfoKeys = Object.keys(person).slice(1,9);
     let personInfo = "";
     for (let i = 0; i < personalInfo.length; i++){
         personInfo += `${personalInfo[i]}: ${person[personalInfoKeys[i]]}\n`;
     }
-    /** 
-     * Code w/o For Loop
-     * let personInfo = `First Name: ${person.firstName}\n`;
-     * personInfo += `Last Name: ${person.lastName}\n`;
-     * personInfo += `Gender: ${person.gender}\n`;
-     * personInfo += `DOB: ${person.dob}\n`;
-     * personInfo += `Height: ${person.height}\n`;
-     * personInfo += `Weight: ${person.weight}\n`;
-     * personInfo += `Eye Color: ${person.eyeColor}\n`;
-     * personInfo += `Occupation: ${person.occupation}`;
-     */
-    //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
     return personInfo
 }
 // End of displayPerson()
@@ -195,7 +194,7 @@ function yesNo(input) {
  * @returns {Boolean}           Default validation -- no logic yet.
  */
 function chars(input) {
-    return true; // Default validation only
+    return input; // Default validation only - add .toTitleCase()?
 }
 // End of chars()
 
@@ -280,6 +279,8 @@ function searchForSiblings(person, people){
  * @param {Object} person
  * @param {Array} people 
  * @returns {String}
+ * 
+ *  Redo with recursion
  */
 function findPersonDescendants(person, people){
     let personDescendants = ' None';
@@ -288,10 +289,38 @@ function findPersonDescendants(person, people){
     }).map(function(el){
         return ` ${el.firstName} ${el.lastName}`;
     });
-    if (descendants.length > 0){
-        personDescendants = descendants
-    }
-    return `Descendants:${personDescendants}`
+    if (descendants.length > 0){personDescendants = descendants}
+    return `Descendants:${personDescendants}`;
 }
 
-/*function searchById(id, people){}*/
+/**
+ * 
+ * @param {Array} people 
+ * @returns {Array}?
+ */
+function searchByTraits(people){
+    let trait = prompt("Do you want to search by 'id', 'firstName', 'lastName', 'gender', 'dob', 'height', 'weight', 'eyeColor', "
+        + "'occupation', 'parents', or 'currentSpouse'?\nType the option you want or type 'restart' to restart search or 'back' to return to main menu");
+    let filteredPeople;
+    // Routes search on the user's input
+    switch (trait){
+        case "id": {
+            filteredPeople = searchById(people); 
+            displayPeople(filteredPeople)
+            break;
+        }
+        // Prompt user again. Instance of recursion.
+        default:{
+            return searchByTraits(people);   
+        }
+    }
+    return filteredPeople
+}
+
+function searchById(people){
+    let selectedId = promptFor("Enter ID to search by:", chars);
+    let filteredResult = people.filter(function(el){
+        return el.id == selectedId;
+    });
+    return filteredResult
+}
