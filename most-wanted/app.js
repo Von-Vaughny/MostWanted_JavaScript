@@ -136,6 +136,7 @@ function displayPeople(people) {
  * This function will be useful for STRINGIFYING a person-object's properties
  * in order to easily send the information to the user in the form of an alert().
  * @param {Object} person       A singular object.
+ * @returns {String}            A string of the person's personal information.
  */
 function displayPerson(person) {
     const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
@@ -200,6 +201,14 @@ function chars(input) {
 
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
+
+/**
+ * This helper function is useful for STRINGIFYING a person-objects parents and spouse properties and 
+ * determing siblings in order to easily send the information to the user in the form of an alert().
+ * @param {Object} person       A singular object.
+ * @param {Array} people        A collection of person objects.
+ * @returns {String}            A string of the person's family (returns 'None' for empty properties)
+ */
 function findPersonFamily(person, people){
     let personName = `${person.firstName} ${person.lastName}'s Family\n\n`;
     let personParents = `Parent(s):${searchForParents(person, people)}\n`;
@@ -207,7 +216,14 @@ function findPersonFamily(person, people){
     let personSiblings = `Sibling(s):${searchForSiblings(person, people)}`;
     return personName + personParents + personSpouse + personSiblings;
 }
+// End findPersonFamily()
 
+/**
+ * 
+ * @param {Object} person       A singular object.
+ * @param {Array} people        A collection of person objects.
+ * @returns {String}            A string of the person's parents (returns 'None' for empty property)
+ */
 function searchForParents(person, people){
     let personParents = ' None';
     if (person.parents.length > 0){
@@ -219,7 +235,14 @@ function searchForParents(person, people){
     }
     return personParents;
 }
+// End of searchForParents()
 
+/**
+ * 
+ * @param {Object} person 
+ * @param {Array} people 
+ * @returns {String}
+ */
 function searchForSpouse(person, people){
     let personSpouse = 'None';
     if (person.currentSpouse){
@@ -231,7 +254,14 @@ function searchForSpouse(person, people){
     }
     return personSpouse;
 }
+// End of serachForSpouse()
 
+/**
+ * 
+ * @param {Object} person 
+ * @param {Array} people 
+ * @returns {String}
+ */
 function searchForSiblings(person, people){
     let personSiblings = ' None';
     if (person.parents.length > 0){
@@ -239,8 +269,29 @@ function searchForSiblings(person, people){
             return (el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1])) && el.id !== person.id;
         }).map(function(el){
             return ` ${el.firstName} ${el.lastName}`;
-        })
+        });
     }
     return personSiblings
 }
+// End of searchForSiblings()
+
+/**
+ * 
+ * @param {Object} person
+ * @param {Array} people 
+ * @returns {String}
+ */
+function findPersonDescendants(person, people){
+    let personDescendants = ' None';
+    let descendants = people.filter(function(el){
+        return el.parents.includes(person.id);
+    }).map(function(el){
+        return ` ${el.firstName} ${el.lastName}`;
+    });
+    if (descendants.length > 0){
+        personDescendants = descendants
+    }
+    return `Descendants:${personDescendants}`
+}
+
 /*function searchById(id, people){}*/
