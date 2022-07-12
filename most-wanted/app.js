@@ -99,7 +99,7 @@ function mainMenu(person, people) {
  * This function is used when searching the people collection by
  * a person-object's firstName and lastName properties.
  * @param {Array} people        A collection of person objects.
- * @returns {Array}             An array containing the person-object (or empty array if no match)
+ * @returns {Array}             An array containing the person-object (or empty array if no match).
  */
 function searchByName(people) {
     let firstName = promptFor("What is the person's first name?", chars);
@@ -137,27 +137,27 @@ function displayPeople(people) {
  * in order to easily send the information to the user in the form of an alert().
  * @param {Object} person       A singular object.
  * @returns {String}            A string of the person's personal information.
- * 
- * Code w/o For Loop
- * let personInfo = `First Name: ${person.firstName}\n`;
- * personInfo += `Last Name: ${person.lastName}\n`;
- * personInfo += `Gender: ${person.gender}\n`;
- * personInfo += `DOB: ${person.dob}\n`;
- * personInfo += `Height: ${person.height}\n`;
- * personInfo += `Weight: ${person.weight}\n`;
- * personInfo += `Eye Color: ${person.eyeColor}\n`;
- * personInfo += `Occupation: ${person.occupation}`;
  */
 function displayPerson(person) {
-    const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
-    // Actually better to get the values.
+    /**
+     * Loop Explaination
+     * let personInfo = `First Name: ${person.firstName}\n`;
+     * personInfo += `Last Name: ${person.lastName}\n`;
+     * personInfo += `Gender: ${person.gender}\n`;
+     * personInfo += `DOB: ${person.dob}\n`;
+     * personInfo += `Height: ${person.height}\n`;
+     * personInfo += `Weight: ${person.weight}\n`;
+     * personInfo += `Eye Color: ${person.eyeColor}\n`;
+     * personInfo += `Occupation: ${person.occupation}`;
+     */
     //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
-    const personalInfoKeys = Object.keys(person).slice(1,9);
+    const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
+    const personalInfoKeys = Object.values(person).slice(1,9);
     let personInfo = "";
     for (let i = 0; i < personalInfo.length; i++){
-        personInfo += `${personalInfo[i]}: ${person[personalInfoKeys[i]]}\n`;
+        personInfo += `${personalInfo[i]}: ${[personalInfoKeys[i]]}\n`;
     }
-    return personInfo
+    return `${person.firstName} ${person.lastName}'s Information\n\n${personInfo}`;
 }
 // End of displayPerson()
 
@@ -202,11 +202,11 @@ function chars(input) {
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
 
 /**
- * This helper function is useful for STRINGIFYING a person-objects parents and spouse properties and 
+ * This helper function will be useful for STRINGIFYING a person-objects parents and spouse properties and 
  * determing siblings in order to easily send the information to the user in the form of an alert().
  * @param {Object} person       A singular object.
  * @param {Array} people        A collection of person objects.
- * @returns {String}            A string of the person's family (returns 'None' for empty properties)
+ * @returns {String}            A string of the person's family (returns 'None' for empty properties).
  */
 function findPersonFamily(person, people){
     let personName = `${person.firstName} ${person.lastName}'s Family\n\n`;
@@ -218,10 +218,11 @@ function findPersonFamily(person, people){
 // End findPersonFamily()
 
 /**
- * 
+ * This helper function will be useful for STRINGIFYING a person-objects parents property in order to 
+ * easily send the information to the user in the form of an alert().
  * @param {Object} person       A singular object.
  * @param {Array} people        A collection of person objects.
- * @returns {String}            A string of the person's parents (returns 'None' for empty property)
+ * @returns {String}            A string of the person's parents (returns 'None' for empty property).
  */
 function searchForParents(person, people){
     let personParents = ' None';
@@ -237,10 +238,11 @@ function searchForParents(person, people){
 // End of searchForParents()
 
 /**
- * 
- * @param {Object} person 
- * @param {Array} people 
- * @returns {String}
+ * This helper function will be useful for STRINGIFYING a person-objects spouse property in order to
+ * easily send the information to the user in the form of an alert().
+ * @param {Object} person       A singular object.
+ * @param {Array} people        A collection of person objects.
+ * @returns {String}            A string of the person's spouse (returns 'None' for empty property).
  */
 function searchForSpouse(person, people){
     let personSpouse = 'None';
@@ -256,10 +258,11 @@ function searchForSpouse(person, people){
 // End of serachForSpouse()
 
 /**
- * 
- * @param {Object} person 
- * @param {Array} people 
- * @returns {String}
+ * This helper function will be useful for determining and STRINGIFYING a person-objects siblings in 
+ * order to easily send the information to the user in the form of an alert().
+ * @param {Object} person       A singular objecct.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {String}            A string of the person's siblings (returns 'None' if none are determined).
  */
 function searchForSiblings(person, people){
     let personSiblings = ' None';
@@ -275,48 +278,87 @@ function searchForSiblings(person, people){
 // End of searchForSiblings()
 
 /**
- * 
- * @param {Object} person
- * @param {Array} people 
- * @returns {String}
- * 
- *  Redo with recursion
+ * This helper function will be useful for determining and STRINGIFYING a person-objects descendants in
+ * order to easily send the information to the user in the form of an alert().
+ * @param {Object} person     A singular object.
+ * @param {Array} people      A collection of the person objects.
+ * @returns {String}          A string of the person's descendants (returns 'None' if none are determined).
  */
+let iCount = -1;
+let tempDescendants = [];
 function findPersonDescendants(person, people){
-    let personDescendants = ' None';
     let descendants = people.filter(function(el){
         return el.parents.includes(person.id);
-    }).map(function(el){
-        return ` ${el.firstName} ${el.lastName}`;
     });
-    if (descendants.length > 0){personDescendants = descendants}
-    return `Descendants:${personDescendants}`;
+    descendants = descendants.flat();
+    /**
+     * Ternary Operator Explaination
+     * if (tempDescendants.length){
+     *    tempDescendants.push(descendants);
+     * } else {
+     *    tempDescendants = descendants;
+     * }
+     */
+    // Easier way to refactor? .flat() seems to only like being placed in format variable1 = variable2.flat(). May work with descendants = descendants.flat()
+    if (descendants.length) {tempDescendants.length ? tempDescendants.push(descendants) : tempDescendants = descendants;} // Easier way to refactor?
+    iCount++
+
+    if (iCount == tempDescendants.length) {
+        let personDescendants = [];
+        tempDescendants.length ? personDescendants = tempDescendants.flat().map(function(el){return ` ${el.firstName} ${el.lastName}`;}) : personDescendants = "None";
+        return `Descendants: ${personDescendants}`;
+    } else {
+        let temporaryDescendants = tempDescendants.flat();
+        return findPersonDescendants(temporaryDescendants[iCount], people); // Does not like iCount++   
+    }
 }
 
 /**
  * 
  * @param {Array} people 
- * @returns {Array}?
+ * @returns {}
  */
 function searchByTraits(people){
     let trait = prompt("Do you want to search by 'id', 'firstName', 'lastName', 'gender', 'dob', 'height', 'weight', 'eyeColor', "
         + "'occupation', 'parents', or 'currentSpouse'?\nType the option you want or type 'restart' to restart search or 'back' to return to main menu");
-    let filteredPeople;
-    // Routes search on the user's input
+    let filteredPeople = people;
+    // Routes search on the user's input.
     switch (trait){
-        case "id": {
-            filteredPeople = searchById(people); 
+        // Returns one person as ID's are unique.
+        case "id": 
+            filteredPeople = searchById(filteredPeople);
             displayPeople(filteredPeople)
             break;
-        }
+        // Returns one person as names in the list of people are all unique.
+        case "firstName":
+            filteredPeople = searchByFirstName(filteredPeople);
+            displayPeople(filteredPeople)
+            break;
+        // May return more than one person as last names are not all unique.
+        case "lastName":
+            filteredPeople = searchByLastName(filteredPeople);
+            displayPeople(filteredPeople)
+        // Ask about this, something is off. May not be able to do a restart here and may need to create a secondary case switch in reFilterPeople(filteredPeople)
+        case "restart":
+            return searchByTraits(people) 
         // Prompt user again. Instance of recursion.
-        default:{
-            return searchByTraits(people);   
-        }
+        default:
+            return searchByTraits(filteredPeople);   
     }
+    /**
+     * if (people.length > 1 && count <= 5) {reFilterPeople(filteredPeople)} -- How to prevent person from doing same trait twice if the same filter is applied. Dictionary
+     * --> set search input as key, but wouldn't allow second key with different trait... maybe doesn't count? --> for this project do not worry about it. 
+     * reFilterPeople(people) => Ask question to filter more, if yes, searchByTraits(people), no, break; => if people.length == 1, return people
+     * if 0, --- does people reset to data from .js
+     */
     return filteredPeople
 }
 
+/**
+ * 
+ * @param {Array} people 
+ * @returns {}            
+ */
 function searchById(people){
     let selectedId = promptFor("Enter ID to search by:", chars);
     let filteredResult = people.filter(function(el){
