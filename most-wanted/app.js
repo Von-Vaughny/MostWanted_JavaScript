@@ -379,9 +379,17 @@ function searchById(people){
  * @returns 
  */
 function searchByFirstName(people){
-    let selectedName = promptFor("Enter first name to search by:", chars);
+    let selectedFirstName = promptFor("Enter first name to search by:", chars);
     let filteredResult = people.filter(function(el){
-        return el.firstName == selectedName;
+        return el.firstName == selectedFirstName;
+    });
+    return filteredResult;
+}
+
+function searchByLastName(people){
+    let selectedLastName = promptFor("Enter last name to search by:", chars);
+    let filteredResult = people.filter(function(el){
+        return el.lastName == selectedLastName;
     });
     return filteredResult;
 }
