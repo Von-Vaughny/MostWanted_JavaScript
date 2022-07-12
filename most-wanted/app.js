@@ -290,7 +290,6 @@ function findPersonDescendants(person, people){
     let descendants = people.filter(function(el){
         return el.parents.includes(person.id);
     });
-    descendants = descendants.flat();
     /**
      * Ternary Operator Explaination
      * if (tempDescendants.length){
@@ -299,10 +298,11 @@ function findPersonDescendants(person, people){
      *    tempDescendants = descendants;
      * }
      */
-    // Easier way to refactor? .flat() seems to only like being placed in format variable1 = variable2.flat(). May work with descendants = descendants.flat()
-    if (descendants.length) {tempDescendants.length ? tempDescendants.push(descendants) : tempDescendants = descendants;} // Easier way to refactor?
-    iCount++
-
+    // Easier way to refactor? .flat() seems to only like being placed in format variable1 = variable2.flat(), not variable = variable.flat().
+    if (descendants.length) {
+        tempDescendants.length ? tempDescendants.push(descendants) : tempDescendants = descendants;
+    }
+    iCount++;
     if (iCount == tempDescendants.length) {
         let personDescendants = [];
         tempDescendants.length ? personDescendants = tempDescendants.flat().map(function(el){return ` ${el.firstName} ${el.lastName}`;}) : personDescendants = "None";
@@ -313,6 +313,7 @@ function findPersonDescendants(person, people){
     }
 }
 
+let traitCount = 0; 
 /**
  * 
  * @param {Array} people 
@@ -320,7 +321,7 @@ function findPersonDescendants(person, people){
  */
 function searchByTraits(people){
     let trait = prompt("Do you want to search by 'id', 'firstName', 'lastName', 'gender', 'dob', 'height', 'weight', 'eyeColor', "
-        + "'occupation', 'parents', or 'currentSpouse'?\nType the option you want or type 'restart' to restart search or 'back' to return to main menu");
+        + "'occupation', 'parents', or 'currentSpouse'?\nType the option you want or type 'back' to return to main menu");
     let filteredPeople = people;
     // Routes search on the user's input.
     switch (trait){
@@ -338,13 +339,18 @@ function searchByTraits(people){
         case "lastName":
             filteredPeople = searchByLastName(filteredPeople);
             displayPeople(filteredPeople)
-        // Ask about this, something is off. May not be able to do a restart here and may need to create a secondary case switch in reFilterPeople(filteredPeople)
-        case "restart":
-            return searchByTraits(people) 
         // Prompt user again. Instance of recursion.
         default:
             return searchByTraits(filteredPeople);   
     }
+
+    //if (!filteredPeople) {
+    //
+    //} else if (filteredPeople.length > 0 && traitCount <= 5) {
+    //    reFilterPeople(filteredPeople);
+    //}
+
+
     /**
      * if (people.length > 1 && count <= 5) {reFilterPeople(filteredPeople)} -- How to prevent person from doing same trait twice if the same filter is applied. Dictionary
      * --> set search input as key, but wouldn't allow second key with different trait... maybe doesn't count? --> for this project do not worry about it. 
@@ -364,5 +370,18 @@ function searchById(people){
     let filteredResult = people.filter(function(el){
         return el.id == selectedId;
     });
-    return filteredResult
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {*} people 
+ * @returns 
+ */
+function searchByFirstName(people){
+    let selectedName = promptFor("Enter first name to search by:", chars);
+    let filteredResult = people.filter(function(el){
+        return el.firstName == selectedName;
+    });
+    return filteredResult;
 }
