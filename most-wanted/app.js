@@ -324,31 +324,33 @@ function searchByTraits(people){
         + "'occupation', 'parents', or 'currentSpouse'?\nType the option you want or type 'back' to return to main menu");
     let filteredPeople = people;
     // Routes search on the user's input.
-    switch (trait){
+    switch (trait) {
         case "id": 
             // Returns one person as ID's are unique.
             filteredPeople = searchById(filteredPeople);
-            displayPeople(filteredPeople);
             break;
         case "firstName":
             // Returns one person as names in the list of people are all unique.
             filteredPeople = searchByFirstName(filteredPeople);
-            displayPeople(filteredPeople);
             break;
         case "lastName":
             // May return more than one person as last names are not all unique.
             filteredPeople = searchByLastName(filteredPeople);
-            displayPeople(filteredPeople);
             break;
         case "gender":
-            // Will return more than one person
+            // Returns more than one person
             filteredPeople = searchByGender(filteredPeople);
-            displayPeople(filteredPeople);
+            break;
+        case "dob":
+            //Returns one person as dobs in the list of people are all unique.
+            filteredPeople = searchByDob(filteredPeople);
             break;
         default:
             // Prompt user again. Instance of recursion.
             return searchByTraits(filteredPeople);   
     }
+
+    displayPeople(filteredPeople);
 
     //if (!filteredPeople) {
         // End application if filtered results return none.
@@ -377,47 +379,60 @@ function searchByTraits(people){
  */
 function searchById(people){
     let selectedId = promptFor("Enter ID to search by:", chars);
-    let filteredResult = people.filter(function(el){
-        return el.id == selectedId;
+    let filteredResult = people.filter(function(person){
+        return person.id == selectedId;
     });
     return filteredResult;
 }
 
 /**
  * 
- * @param {*} people 
+ * @param {Array} people 
  * @returns 
  */
 function searchByFirstName(people){
     let selectedFirstName = promptFor("Enter first name to search by:", chars);
-    let filteredResult = people.filter(function(el){
-        return el.firstName == selectedFirstName;
+    let filteredResult = people.filter(function(person){
+        return person.firstName == selectedFirstName;
     });
     return filteredResult;
 }
 
 /**
  * 
- * @param {*} people 
+ * @param {Array} people 
  * @returns 
  */
 function searchByLastName(people){
     let selectedLastName = promptFor("Enter last name to search by:", chars);
-    let filteredResult = people.filter(function(el){
-        return el.lastName == selectedLastName;
+    let filteredResult = people.filter(function(person){
+        return person.lastName == selectedLastName;
     });
     return filteredResult;
 }
 
 /**
  * 
- * @param {*} people 
+ * @param {Array} people 
  * @returns 
  */
 function searchByGender(people){
     let selectedGender = promptFor("Enter gender to search by:", chars);
-    let filteredResult = people.filter(function(el){
-        return el.gender == selectedGender;
+    let filteredResult = people.filter(function(person){
+        return person.gender == selectedGender;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByDob(people){
+    let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search by:", chars); //* Validate using another helper function.   
+    let filteredResult = people.filter(function(person){
+        return person.dob == selectedDob;
     });
     return filteredResult;
 }
