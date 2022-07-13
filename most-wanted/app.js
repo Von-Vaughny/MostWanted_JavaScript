@@ -313,7 +313,7 @@ function findPersonDescendants(person, people){
     }
 }
 
-let traitCount = 0; 
+let traitCount = []; 
 /**
  * 
  * @param {Array} people 
@@ -325,28 +325,38 @@ function searchByTraits(people){
     let filteredPeople = people;
     // Routes search on the user's input.
     switch (trait){
-        // Returns one person as ID's are unique.
         case "id": 
+            // Returns one person as ID's are unique.
             filteredPeople = searchById(filteredPeople);
-            displayPeople(filteredPeople)
+            displayPeople(filteredPeople);
             break;
-        // Returns one person as names in the list of people are all unique.
         case "firstName":
+            // Returns one person as names in the list of people are all unique.
             filteredPeople = searchByFirstName(filteredPeople);
-            displayPeople(filteredPeople)
+            displayPeople(filteredPeople);
             break;
-        // May return more than one person as last names are not all unique.
         case "lastName":
+            // May return more than one person as last names are not all unique.
             filteredPeople = searchByLastName(filteredPeople);
-            displayPeople(filteredPeople)
-        // Prompt user again. Instance of recursion.
+            displayPeople(filteredPeople);
+            break;
+        case "gender":
+            // Will return more than one person
+            filteredPeople = searchByGender(filteredPeople);
+            displayPeople(filteredPeople);
+            break;
         default:
+            // Prompt user again. Instance of recursion.
             return searchByTraits(filteredPeople);   
     }
 
     //if (!filteredPeople) {
+        // End application if filtered results return none.
+    //    return;
+    //}  else if (filter)
+    //if (!filteredPeople) {
     //
-    //} else if (filteredPeople.length > 0 && traitCount <= 5) {
+    //} else if (filteredPeople.length > 0 && traitCount.length <= 5) {
     //    reFilterPeople(filteredPeople);
     //}
 
@@ -386,10 +396,28 @@ function searchByFirstName(people){
     return filteredResult;
 }
 
+/**
+ * 
+ * @param {*} people 
+ * @returns 
+ */
 function searchByLastName(people){
     let selectedLastName = promptFor("Enter last name to search by:", chars);
     let filteredResult = people.filter(function(el){
         return el.lastName == selectedLastName;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {*} people 
+ * @returns 
+ */
+function searchByGender(people){
+    let selectedGender = promptFor("Enter gender to search by:", chars);
+    let filteredResult = people.filter(function(el){
+        return el.gender == selectedGender;
     });
     return filteredResult;
 }
