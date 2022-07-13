@@ -340,7 +340,7 @@ function searchByTraits(people){
             filteredPeople = searchByLastName(filteredPeople);
             break;
         case "gender":
-            // Returns more than one person
+            // Returns more than one person.
             filteredPeople = searchByGender(filteredPeople);
             break;
         case "dob":
@@ -362,6 +362,10 @@ function searchByTraits(people){
         case "occupation":
             // May return more than one person as occupations in the list of people are not all unique.
             filteredPeople = searchByOccupation(filteredPeople);
+            break;
+        case "parents":
+            // May return more than one person as a parent may have more than one child.
+            filteredPeople = searchByParent(filteredPeople);
             break;
         default:
             // Prompt user again. Instance of recursion.
@@ -503,6 +507,19 @@ function searchByGender(people) {
     let selectedOccupation = promptFor("Enter occupation to search by:", chars);
     let filteredResult = people.filter(function(person){
         return person.occupation == selectedOccupation;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByParent(people) {
+    let selectedParent = prompt("Enter parent id to search by:"); //* Validate using another helper function: numberForm to parseInt
+    let filteredResult = people.filter(function(person){
+        return person.parents.includes(parseInt(selectedParent));
     });
     return filteredResult;
 }
