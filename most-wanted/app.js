@@ -359,6 +359,10 @@ function searchByTraits(people){
             // May return more than one person as eye colors in the list of people are not all unique.
             filteredPeople = searchByEyeColor(filteredPeople);
             break;
+        case "occupation":
+            // May return more than one person as occupations in the list of people are not all unique.
+            filteredPeople = searchByOccupation(filteredPeople);
+            break;
         default:
             // Prompt user again. Instance of recursion.
             return searchByTraits(filteredPeople);   
@@ -391,7 +395,7 @@ function searchByTraits(people){
  * @param {Array} people 
  * @returns {}            
  */
-function searchById(people){
+function searchById(people) {
     let selectedId = promptFor("Enter ID to search by:", chars);
     let filteredResult = people.filter(function(person){
         return person.id == selectedId;
@@ -404,7 +408,7 @@ function searchById(people){
  * @param {Array} people 
  * @returns 
  */
-function searchByFirstName(people){
+function searchByFirstName(people) {
     let selectedFirstName = promptFor("Enter first name to search by:", chars);
     let filteredResult = people.filter(function(person){
         return person.firstName == selectedFirstName;
@@ -417,7 +421,7 @@ function searchByFirstName(people){
  * @param {Array} people 
  * @returns 
  */
-function searchByLastName(people){
+function searchByLastName(people) {
     let selectedLastName = promptFor("Enter last name to search by:", chars);
     let filteredResult = people.filter(function(person){
         return person.lastName == selectedLastName;
@@ -430,7 +434,7 @@ function searchByLastName(people){
  * @param {Array} people 
  * @returns 
  */
-function searchByGender(people){
+function searchByGender(people) {
     let selectedGender = promptFor("Enter gender to search by:", chars);
     let filteredResult = people.filter(function(person){
         return person.gender == selectedGender;
@@ -443,7 +447,7 @@ function searchByGender(people){
  * @param {Array} people 
  * @returns 
  */
- function searchByDob(people){
+ function searchByDob(people) {
     let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search by:", chars); //* Validate using another helper function: nums  
     let filteredResult = people.filter(function(person){
         return person.dob == selectedDob;
@@ -456,7 +460,7 @@ function searchByGender(people){
  * @param {Array} people 
  * @returns 
  */
- function searchByHeight(people){
+ function searchByHeight(people) {
     let selectedHeight = promptFor("Enter height (inches) to search by:", chars); //* Validate using another helper function: nums
     let filteredResult = people.filter(function(person){
         return person.height == selectedHeight;
@@ -469,7 +473,7 @@ function searchByGender(people){
  * @param {Array} people 
  * @returns 
  */
- function searchByWeight(people){
+ function searchByWeight(people) {
     let selectedWeight = promptFor("Enter weight (lbs) to search by:", chars); //* Validate using another helper function: nums
     let filteredResult = people.filter(function(person){
         return person.weight == selectedWeight;
@@ -482,10 +486,23 @@ function searchByGender(people){
  * @param {Array} people 
  * @returns 
  */
- function searchByEyeColor(people){
+ function searchByEyeColor(people) {
     let selectedEyeColor = promptFor("Enter eye color to search by:", chars);
     let filteredResult = people.filter(function(person){
         return person.eyeColor == selectedEyeColor;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByOccupation(people) {
+    let selectedOccupation = promptFor("Enter occupation to search by:", chars);
+    let filteredResult = people.filter(function(person){
+        return person.occupation == selectedOccupation;
     });
     return filteredResult;
 }
