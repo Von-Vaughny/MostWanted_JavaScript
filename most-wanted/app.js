@@ -38,6 +38,8 @@ function app(people) {
             app(people);
             break;
     }
+    // Declares an unchangeable array of people.
+    const originalPeople = people;
     // Calls the mainMenu() only AFTER we find the SINGLE PERSON
     mainMenu(searchResults, people);
 }
@@ -122,13 +124,19 @@ function searchByName(people) {
  * @param {Array} people        A collection of person objects.
  */
 function displayPeople(people) {
-    alert(
-        people
-            .map(function (person) {
-                return `${person.firstName} ${person.lastName}`;
-            })
-            .join("\n")
-    );
+    let results = "";
+    let pCount = 0; // Refactor? 
+    for (let i = 0; i < people.length; i++){
+        results += `Enter ${i+1} to select ${people[i].firstName} ${people[i].lastName}\n`
+        pCount++; // Refactor?
+    }
+    let reFilter = parseInt(prompt(`Search Results\n\n${results}Enter 0 to search an additional trait.`)); 
+    switch (true) {
+        case (reFilter <= pCount && reFilter >= 0):  // Acts a form of validation. Can do another function
+            return reFilter;
+        default:
+            return displayPeople(people);
+    }
 }
 // End of displayPeople()
 
@@ -194,9 +202,12 @@ function yesNo(input) {
  * @returns {Boolean}           Default validation -- no logic yet.
  */
 function chars(input) {
-//    let personProperties = ["id", "firstName", "lastName", "gender", "dob", "height", "weight", "eyeColor", "occupation", "parents", "currentSpouse"].toLowerCase();
-//    return personProperties.includes(input.toLowerCase());
-    return input.toLowerCase();
+    const personProperties = ["id", "firstName", "lastName", "gender", "dob", "height", "weight", "eyeColor", "occupation", "parents", "currentSpouse"]; 
+    let properties = personProperties.map(function(property){
+        return property.toLowerCase();
+    });
+    return properties.includes(input.toLowerCase());
+    //return input.toLowerCase();
 }
 // End of chars()
 
@@ -300,13 +311,13 @@ function findPersonDescendants(person, people){
      *    tempDescendants = descendants;
      * }
      */
-    // Easier way to refactor? .flat() seems to only like being placed in format variable1 = variable2.flat(), not variable = variable.flat().
     if (descendants.length) {
         tempDescendants.length ? tempDescendants.push(descendants) : tempDescendants = descendants;
     }
     iCount++;
     if (iCount == tempDescendants.length) {
         let personDescendants = [];
+        // .flat() seems to only like being placed in format variable1 = variable2.flat(), not variable = variable.flat().
         tempDescendants.length ? personDescendants = tempDescendants.flat().map(function(el){return ` ${el.firstName} ${el.lastName}`;}) : personDescendants = "None";
         return `Descendants: ${personDescendants}`;
     } else {
@@ -314,6 +325,7 @@ function findPersonDescendants(person, people){
         return findPersonDescendants(temporaryDescendants[iCount], people); // Does not like iCount++   
     }
 }
+// End of findPersonDescendants();
 
 let traitCount = []; 
 /**
@@ -323,44 +335,49 @@ let traitCount = [];
  */
 function searchByTraits(people){
     let trait = promptFor("Do you want to search by 'id', 'firstname', 'lastname', 'gender', 'dob', 'height', 'weight', 'eyecolor', "
-        + "'occupation', 'parents', or 'currentspouse'?\nType the option you want or type 'back' to return to main menu", chars).toLowerCase();
+        + "'occupation', 'parents', or 'currentspouse'?\nType the option you want or type 'restart' or quit'.", chars).toLowerCase();
     let filteredPeople = people;
     // Routes search on the user's input.
     switch (trait) {
         case "id": 
-            // Returns one person as ID's are unique.
+            // Returns one person as ids are all unique.
             filteredPeople = searchById(filteredPeople);
             break;
         case "firstname":
-            // Returns one person as names in the list of people are all unique.
+            // Returns one person as first names are all unique.
             filteredPeople = searchByFirstName(filteredPeople);
             break;
         case "lastname":
-            // May return more than one person as last names in the list of people are not all unique.
-            filteredPeople = searchByLastName(filteredPeople);
-            break;
+            // May return more than one person as last names are not all unique. // Can place in a dictionary?
+            if (!traitCount.includes("lastname")) {
+                traitCount.push("lastname");
+                filteredPeople = searchByLastName(filteredPeople);
+            } else {
+                alert("Trait 'last name' has already been used.")
+            }
+            break;  
         case "gender":
             // Returns more than one person.
             filteredPeople = searchByGender(filteredPeople);
             break;
         case "dob":
-            // Returns one person as dobs in the list of people are all unique.
+            // Returns one person as dobs are all unique.
             filteredPeople = searchByDob(filteredPeople);
             break;
         case "height":
-            // May return more than one person as heights in the list of people are not all unique.
+            // May return more than one person as heights are not all unique.
             filteredPeople = searchByHeight(filteredPeople);
             break;
         case "weight":
-            // May return more than one person as weights in the list of people are not all unique.
+            // May return more than one person as weights are not all unique.
             filteredPeople = searchByWeight(filteredPeople);
             break;
         case "eyecolor":
-            // May return more than one person as eye colors in the list of people are not all unique.
+            // May return more than one person as eye colors are not all unique.
             filteredPeople = searchByEyeColor(filteredPeople);
             break;
         case "occupation":
-            // May return more than one person as occupations in the list of people are not all unique.
+            // May return more than one person as occupations are not all unique.
             filteredPeople = searchByOccupation(filteredPeople);
             break;
         case "parents":
@@ -368,35 +385,37 @@ function searchByTraits(people){
             filteredPeople = searchByParent(filteredPeople);
             break;
         case "currentspouse":
-            // Returns one person as current spouse in the list of people are all unique.
+            // Returns one person as current spouses are all unique.
             filteredPeople = searchByCurrentSpouse(filteredPeople);
             break;
+        case "restart":
+            // Restart app() from the very beginning
+            app(people);
+        case "quit":
+            return;
         default:
             // Prompt user again. Instance of recursion.
             return searchByTraits(filteredPeople);   
     }
 
-    displayPeople(filteredPeople);
-
-    //if (!filteredPeople) {
-        // End application if filtered results return none.
-    //    return;
-    //}  else if (filter)
-    //if (!filteredPeople) {
-    //
-    //} else if (filteredPeople.length > 0 && traitCount.length <= 5) {
-    //    reFilterPeople(filteredPeople);
-    //}
-
-
-    /**
-     * if (people.length > 1 && count <= 5) {reFilterPeople(filteredPeople)} -- How to prevent person from doing same trait twice if the same filter is applied. Dictionary
-     * --> set search input as key, but wouldn't allow second key with different trait... maybe doesn't count? --> for this project do not worry about it. 
-     * reFilterPeople(people) => Ask question to filter more, if yes, searchByTraits(people), no, break; => if people.length == 1, return people
-     * if 0, --- does people reset to data from .js
-     */
-    return filteredPeople
+    // A check to verify a person exists in the filtered list.
+    if (!filteredPeople[0]) {
+        alert("Could not find a person matching search trait(s).");
+        // Restart app() from the very beginning
+        app(people);   
+    } else if (traitCount.length <= 5) {
+        let reFilter = parseInt(displayPeople(filteredPeople));
+        let arr = []
+        switch (true) {
+            case reFilter > 0:
+                arr.push(filteredPeople[reFilter-1]);
+                return arr;
+            default:
+                return searchByTraits(filteredPeople);
+        }
+    }
 }
+// End of searchByTraits()
 
 /**
  * 
@@ -404,12 +423,13 @@ function searchByTraits(people){
  * @returns {}            
  */
 function searchById(people) {
-    let selectedId = promptFor("Enter ID to search by:", chars);
+    let selectedId = promptFor("Enter ID to search:", chars);
     let filteredResult = people.filter(function(person){
         return person.id == selectedId;
     });
     return filteredResult;
 }
+// End of searchById()
 
 /**
  * 
@@ -417,12 +437,13 @@ function searchById(people) {
  * @returns 
  */
 function searchByFirstName(people) {
-    let selectedFirstName = promptFor("Enter first name to search by:", chars);
+    let selectedFirstName = promptFor("Enter first name to search:", chars);
     let filteredResult = people.filter(function(person){
         return person.firstName == selectedFirstName;
     });
     return filteredResult;
 }
+// End of searchByFirstName()
 
 /**
  * 
@@ -430,12 +451,13 @@ function searchByFirstName(people) {
  * @returns 
  */
 function searchByLastName(people) {
-    let selectedLastName = promptFor("Enter last name to search by:", chars);
+    let selectedLastName = promptFor("Enter last name to search:", chars);
     let filteredResult = people.filter(function(person){
         return person.lastName == selectedLastName;
     });
     return filteredResult;
 }
+// End of searchByLastName()
 
 /**
  * 
@@ -443,12 +465,13 @@ function searchByLastName(people) {
  * @returns 
  */
 function searchByGender(people) {
-    let selectedGender = promptFor("Enter gender to search by:", chars);
+    let selectedGender = promptFor("Enter gender to search:", chars);
     let filteredResult = people.filter(function(person){
         return person.gender == selectedGender;
     });
     return filteredResult;
 }
+// End of searchByGender()
 
 /**
  * 
@@ -456,12 +479,13 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByDob(people) {
-    let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search by:", chars); //* Validate using another helper function: nums  
+    let selectedDob = prompt("Enter date of birth (format 02/21/1999) to search:"); //* Validate using another helper function: nums  
     let filteredResult = people.filter(function(person){
         return person.dob == selectedDob;
     });
     return filteredResult;
 }
+// End of searchByDob()
 
 /**
  * 
@@ -469,12 +493,13 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByHeight(people) {
-    let selectedHeight = promptFor("Enter height (inches) to search by:", chars); //* Validate using another helper function: nums
+    let selectedHeight = prompt("Enter height (inches) to search:"); //* Validate using another helper function: nums
     let filteredResult = people.filter(function(person){
         return person.height == selectedHeight;
     });
     return filteredResult;
 }
+// End of searchByHeight()
 
 /**
  * 
@@ -482,12 +507,13 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByWeight(people) {
-    let selectedWeight = promptFor("Enter weight (lbs) to search by:", chars); //* Validate using another helper function: nums
+    let selectedWeight = prompt("Enter weight (lbs) to search:"); //* Validate using another helper function: nums
     let filteredResult = people.filter(function(person){
         return person.weight == selectedWeight;
     });
     return filteredResult;
 }
+// End of searchByWeight()
 
 /**
  * 
@@ -495,12 +521,13 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByEyeColor(people) {
-    let selectedEyeColor = promptFor("Enter eye color to search by:", chars);
+    let selectedEyeColor = promptFor("Enter eye color to search:", chars);
     let filteredResult = people.filter(function(person){
         return person.eyeColor == selectedEyeColor;
     });
     return filteredResult;
 }
+// End of searchByEyeColor()
 
 /**
  * 
@@ -508,12 +535,13 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByOccupation(people) {
-    let selectedOccupation = promptFor("Enter occupation to search by:", chars);
+    let selectedOccupation = promptFor("Enter occupation to search:", chars);
     let filteredResult = people.filter(function(person){
         return person.occupation == selectedOccupation;
     });
     return filteredResult;
 }
+// End of searchByOccupation()
 
 /**
  * 
@@ -521,12 +549,13 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByParent(people) {
-    let selectedParent = prompt("Enter parent id to search by:"); //* Validate using another helper function: numberForm to parseInt
+    let selectedParent = prompt("Enter parent id to search:"); //* Validate using another helper function: numberForm to parseInt
     let filteredResult = people.filter(function(person){
         return person.parents.includes(parseInt(selectedParent));
     });
     return filteredResult;
 }
+// End of searchByParent()
 
 /**
  * 
@@ -534,9 +563,10 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByCurrentSpouse(people) {
-    let selectedCurrentSpouse = prompt("Enter current spouse id to search by:"); //* Validate using another helper function: numberForm to parseInt
+    let selectedCurrentSpouse = prompt("Enter current spouse id to search:"); //* Validate using another helper function: numberForm to parseInt
     let filteredResult = people.filter(function(person){
         return person.currentSpouse == parseInt(selectedCurrentSpouse);
     });
     return filteredResult;
 }
+// End of searchByCurrentSpouse()
