@@ -349,6 +349,10 @@ function searchByTraits(people){
             // May return more than one person as heights are not all unique.
             filteredPeople = searchByHeight(filteredPeople);
             break;
+        case "weight":
+            // May return more than one person as weights are not all unique.
+            filteredPeople = searchByWeight(filteredPeople);
+            break;
         default:
             // Prompt user again. Instance of recursion.
             return searchByTraits(filteredPeople);   
@@ -450,6 +454,19 @@ function searchByGender(people){
     let selectedHeight = promptFor("Enter height (inches) to search by:", chars); //* Validate using another helper function: nums
     let filteredResult = people.filter(function(person){
         return person.height == selectedHeight;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByWeight(people){
+    let selectedWeight = promptFor("Enter weight (lbs) to search by:", chars); //* Validate using another helper function: nums
+    let filteredResult = people.filter(function(person){
+        return person.weight == selectedWeight;
     });
     return filteredResult;
 }
