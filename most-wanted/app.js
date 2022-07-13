@@ -367,6 +367,10 @@ function searchByTraits(people){
             // May return more than one person as a parent may have more than one child.
             filteredPeople = searchByParent(filteredPeople);
             break;
+        case "currentspouse":
+            // Returns one person as current spouse in the list of people are all unique.
+            filteredPeople = searchByCurrentSpouse(filteredPeople);
+            break;
         default:
             // Prompt user again. Instance of recursion.
             return searchByTraits(filteredPeople);   
@@ -520,6 +524,19 @@ function searchByGender(people) {
     let selectedParent = prompt("Enter parent id to search by:"); //* Validate using another helper function: numberForm to parseInt
     let filteredResult = people.filter(function(person){
         return person.parents.includes(parseInt(selectedParent));
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByCurrentSpouse(people) {
+    let selectedCurrentSpouse = prompt("Enter current spouse id to search by:"); //* Validate using another helper function: numberForm to parseInt
+    let filteredResult = people.filter(function(person){
+        return person.currentSpouse == parseInt(selectedCurrentSpouse);
     });
     return filteredResult;
 }
