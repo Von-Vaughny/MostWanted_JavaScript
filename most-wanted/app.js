@@ -342,8 +342,12 @@ function searchByTraits(people){
             filteredPeople = searchByGender(filteredPeople);
             break;
         case "dob":
-            //Returns one person as dobs in the list of people are all unique.
+            // Returns one person as dobs in the list of people are all unique.
             filteredPeople = searchByDob(filteredPeople);
+            break;
+        case "height":
+            // May return more than one person as heights are not all unique.
+            filteredPeople = searchByHeight(filteredPeople);
             break;
         default:
             // Prompt user again. Instance of recursion.
@@ -430,9 +434,22 @@ function searchByGender(people){
  * @returns 
  */
  function searchByDob(people){
-    let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search by:", chars); //* Validate using another helper function.   
+    let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search by:", chars); //* Validate using another helper function: nums  
     let filteredResult = people.filter(function(person){
         return person.dob == selectedDob;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByHeight(people){
+    let selectedHeight = promptFor("Enter height (inches) to search by:", chars); //* Validate using another helper function: nums
+    let filteredResult = people.filter(function(person){
+        return person.height == selectedHeight;
     });
     return filteredResult;
 }
