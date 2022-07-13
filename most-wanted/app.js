@@ -190,11 +190,13 @@ function yesNo(input) {
 /**
  * This helper function operates as a default callback for promptFor's validation.
  * Feel free to modify this to suit your needs.
- * @param {String} input        A string.
+ * @param {String} input        A string that will be normalized via .toLowerCase().
  * @returns {Boolean}           Default validation -- no logic yet.
  */
 function chars(input) {
-    return input; // Default validation only - add .toTitleCase()?
+//    let personProperties = ["id", "firstName", "lastName", "gender", "dob", "height", "weight", "eyeColor", "occupation", "parents", "currentSpouse"].toLowerCase();
+//    return personProperties.includes(input.toLowerCase());
+    return input.toLowerCase();
 }
 // End of chars()
 
@@ -320,8 +322,8 @@ let traitCount = [];
  * @returns {}
  */
 function searchByTraits(people){
-    let trait = prompt("Do you want to search by 'id', 'firstName', 'lastName', 'gender', 'dob', 'height', 'weight', 'eyeColor', "
-        + "'occupation', 'parents', or 'currentSpouse'?\nType the option you want or type 'back' to return to main menu");
+    let trait = promptFor("Do you want to search by 'id', 'firstname', 'lastname', 'gender', 'dob', 'height', 'weight', 'eyecolor', "
+        + "'occupation', 'parents', or 'currentspouse'?\nType the option you want or type 'back' to return to main menu", chars).toLowerCase();
     let filteredPeople = people;
     // Routes search on the user's input.
     switch (trait) {
@@ -329,12 +331,12 @@ function searchByTraits(people){
             // Returns one person as ID's are unique.
             filteredPeople = searchById(filteredPeople);
             break;
-        case "firstName":
+        case "firstname":
             // Returns one person as names in the list of people are all unique.
             filteredPeople = searchByFirstName(filteredPeople);
             break;
-        case "lastName":
-            // May return more than one person as last names are not all unique.
+        case "lastname":
+            // May return more than one person as last names in the list of people are not all unique.
             filteredPeople = searchByLastName(filteredPeople);
             break;
         case "gender":
@@ -346,12 +348,16 @@ function searchByTraits(people){
             filteredPeople = searchByDob(filteredPeople);
             break;
         case "height":
-            // May return more than one person as heights are not all unique.
+            // May return more than one person as heights in the list of people are not all unique.
             filteredPeople = searchByHeight(filteredPeople);
             break;
         case "weight":
-            // May return more than one person as weights are not all unique.
+            // May return more than one person as weights in the list of people are not all unique.
             filteredPeople = searchByWeight(filteredPeople);
+            break;
+        case "eyecolor":
+            // May return more than one person as eye colors in the list of people are not all unique.
+            filteredPeople = searchByEyeColor(filteredPeople);
             break;
         default:
             // Prompt user again. Instance of recursion.
@@ -467,6 +473,19 @@ function searchByGender(people){
     let selectedWeight = promptFor("Enter weight (lbs) to search by:", chars); //* Validate using another helper function: nums
     let filteredResult = people.filter(function(person){
         return person.weight == selectedWeight;
+    });
+    return filteredResult;
+}
+
+/**
+ * 
+ * @param {Array} people 
+ * @returns 
+ */
+ function searchByEyeColor(people){
+    let selectedEyeColor = promptFor("Enter eye color to search by:", chars);
+    let filteredResult = people.filter(function(person){
+        return person.eyeColor == selectedEyeColor;
     });
     return filteredResult;
 }
