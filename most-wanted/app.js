@@ -9,6 +9,7 @@
 ////* Mac: Press "CMD"+"K" and then "CMD"+"/"
 ////* PC: Press "CTRL"+"K" and then "CTRL"+"/"
 
+
 /**
  * This is the main logic function being called in index.html.
  * It operates as the entry point for our entire application and allows
@@ -58,9 +59,10 @@ function mainMenu(person, people) {
         // Restarts app() from the very beginning
         return app(people);
     }
-    let displayOption = prompt(
-        `Found ${person[0].firstName} ${person[0].lastName}. Do you want to know their 'info', 'family', or 'descendants'?\nType the option you want or type 'restart' or 'quit'.`
-    );
+    let displayOption = promptFor(
+        `Found ${person[0].firstName} ${person[0].lastName}. Do you want to know their 'info', 'family', or 'descendants'?\nType the option you want or type 'restart' or 'quit'.`,
+        chars
+    ).toLowerCase();
     // Routes our application based on the user's input
     switch (displayOption) {
         case "info":
@@ -87,6 +89,7 @@ function mainMenu(person, people) {
             break;
         case "quit":
             // Stop application execution
+            traitCount = [];
             return;
         default:
             // Prompt user again. Another instance of recursion
@@ -102,12 +105,12 @@ function mainMenu(person, people) {
  * @returns {Array}             An array containing the person-object (or empty array if no match).
  */
 function searchByName(people) {
-    let firstName = promptFor("What is the person's first name?", chars);
-    let lastName = promptFor("What is the person's last name?", chars);
+    let firstName = promptFor("What is the person's first name?", chars).toLowerCase();
+    let lastName = promptFor("What is the person's last name?", chars).toLowerCase();
 
     // The foundPerson value will be of type Array. Recall that .filter() ALWAYS returns an array.
     let foundPerson = people.filter(function (person) {
-        if (person.firstName === firstName && person.lastName === lastName) {
+        if (person.firstName.toLowerCase() === firstName && person.lastName.toLowerCase() === lastName) {
             return true;
         }
     });
@@ -128,9 +131,9 @@ function displayPeople(people) {
         results += `Enter ${i+1} to select ${people[i].firstName} ${people[i].lastName}\n`
         pCount++; // Refactor?
     }
-    let reFilter = parseInt(promptFor(`Search Results\n\n${results}Enter 0 to search an additional trait.`), nums); 
+    let reFilter = parseInt(promptFor(`Search Results (Traits: ${traitCount.join(", ")})\n\n${results}Enter 0 to search an additional trait.`, nums)); 
     switch (true) {
-        case (reFilter <= pCount && reFilter >= 0):  
+        case (reFilter <= pCount && reFilter >= 0):
             return reFilter;
         default:
             return displayPeople(people);
@@ -145,6 +148,10 @@ function displayPeople(people) {
  * @returns {String}            A string of the person's personal information.
  */
 function displayPerson(person) {
+    //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
+    const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"]; // Refactor?
+    const personalInfoKeys = Object.values(person).slice(1,9);
+    let personInfo = "";
     /**
      * Loop Explaination
      * let personInfo = `First Name: ${person.firstName}\n`;
@@ -155,11 +162,7 @@ function displayPerson(person) {
      * personInfo += `Weight: ${person.weight}\n`;
      * personInfo += `Eye Color: ${person.eyeColor}\n`;
      * personInfo += `Occupation: ${person.occupation}`;
-     */
-    //! TODO #1a: finish getting the rest of the information to display //////////////////////////////////////////
-    const personalInfo = ["First Name", "Last Name", "Gender", "DOB", "Height", "Weight", "Eye Color", "Occupation"];
-    const personalInfoKeys = Object.values(person).slice(1,9);
-    let personInfo = "";
+     */    
     for (let i = 0; i < personalInfo.length; i++){
         personInfo += `${personalInfo[i]}: ${[personalInfoKeys[i]]}\n`;
     }
@@ -200,13 +203,7 @@ function yesNo(input) {
  * @returns {Boolean}           The result of our condition evaluation.
  */
 function chars(input) {
-    // Need to add info, family, descendants. FIX - for property values or add one for people <---- or.... do for loop in a for loop.
-    const personProperties = ["id", "firstName", "lastName", "gender", "dob", "height", "weight", "eyeColor", "occupation", "parents", "currentSpouse"]; 
-    let properties = personProperties.map(function(property){
-        return property.toLowerCase();
-    });
-    //return properties.includes(input.toLowerCase());
-    return input.toLowerCase();
+    return /^[a-z]+$/.test(input.toLowerCase());
 }
 // End of chars()
 
@@ -220,7 +217,7 @@ function chars(input) {
  * @returns {Boolean}           The result of our condition evaluation.
  */
 function nums(input){
-    return !isNaN(input) && Number.isInteger(Number(input));
+    return Number.isInteger(Number(input));
 }
 // End of nums()
 
@@ -367,7 +364,7 @@ let traitCount = []; // Add into functionality to keep track of trait count.
  */
 function searchByTraits(people){
     let trait = promptFor("Do you want to search by 'id', 'firstname', 'lastname', 'gender', 'dob', 'height', 'weight', 'eyecolor', "
-        + "'occupation', 'parents', or 'currentspouse'?\nType the option you want or type 'restart' or quit'.", chars).toLowerCase();
+        + "'occupation', 'parents', or 'currentspouse'?\nType the option you want or type 'quit'.", chars).toLowerCase();
     let filteredPeople = people;
     // Routes search on the user's input.
     switch (trait) {
@@ -382,15 +379,20 @@ function searchByTraits(people){
         case "lastname":
             // May return more than one person as last names are not all unique.
             if (!traitCount.includes("lastname")) {
-                traitCount.push("lastname");
+                traitCount.push("lastname")
                 filteredPeople = searchByLastName(filteredPeople);
             } else {
-                alert("Trait 'last name' has already been used.")
+                alert("Trait 'last name' has already been searched.")
             }
             break;  
         case "gender":
             // Returns more than one person.
-            filteredPeople = searchByGender(filteredPeople);
+            if (!traitCount.includes("gender")) {
+                traitCount.push("gender");
+                filteredPeople = searchByGender(filteredPeople);
+            } else {
+                alert("Trait 'gender' has already been searched.");
+            }
             break;
         case "dob":
             // Returns one person as dobs are all unique.
@@ -398,32 +400,55 @@ function searchByTraits(people){
             break;
         case "height":
             // May return more than one person as heights are not all unique.
-            filteredPeople = searchByHeight(filteredPeople);
+            if (!traitCount.includes("height")) {
+                traitCount.push("height");
+                filteredPeople = searchByHeight(filteredPeople);
+            } else {
+                alert("Trait 'height' has already been searched.");
+            }
             break;
         case "weight":
             // May return more than one person as weights are not all unique.
-            filteredPeople = searchByWeight(filteredPeople);
+            if (!traitCount.includes("weight")){
+                traitCount.push("weight");
+                filteredPeople = searchByWeight(filteredPeople);
+            } else {
+                alert("Trait 'weight' has already been searched.");
+            }
             break;
         case "eyecolor":
             // May return more than one person as eye colors are not all unique.
-            filteredPeople = searchByEyeColor(filteredPeople);
+            if (!traitCount.includes("eyecolor")) {
+                traitCount.push("eyecolor");
+                filteredPeople = searchByEyeColor(filteredPeople);
+            } else {
+                alert("Trait 'eye color' has already been search.");
+            }
             break;
         case "occupation":
             // May return more than one person as occupations are not all unique.
-            filteredPeople = searchByOccupation(filteredPeople);
+            if (!traitCount.includes("occupation")) {
+                traitCount.push("occupation");
+                filteredPeople = searchByOccupation(filteredPeople);
+            } else {
+                alert("Trait 'occupation' has already been searched.")
+            }
             break;
         case "parents":
             // May return more than one person as a parent may have more than one child.
-            filteredPeople = searchByParent(filteredPeople);
+            if (!traitCount.includes("parents")) {
+                traitCount.push("parents");
+                filteredPeople = searchByParent(filteredPeople);
+            } else {
+                alert("Trait 'parents' has already been searched.")
+            }
             break;
         case "currentspouse":
             // Returns one person as current spouses are all unique.
             filteredPeople = searchByCurrentSpouse(filteredPeople);
             break;
-        case "restart":
-            // Restart app() from the very beginning
-            app(people);
         case "quit":
+            traitCount = [];
             return;
         default:
             // Prompt user again. Instance of recursion.
@@ -433,15 +458,14 @@ function searchByTraits(people){
     // A check to verify a person exists in the filtered list.
     if (!filteredPeople[0]) {
         alert("Could not find a person matching search trait(s).");
-        // Restart app() from the very beginning
-        app(people);   
+        return;   
     } else if (traitCount.length <= 5) {
         let reFilter = displayPeople(filteredPeople);
         let arr = [] // rename
         switch (true) {
-            case reFilter > 0:
+            case (reFilter > 0):
                 arr.push(filteredPeople[reFilter-1]);
-                return arr;
+                return arr;  
             default:
                 return searchByTraits(filteredPeople);
         }
@@ -456,10 +480,15 @@ function searchByTraits(people){
  */
 function searchById(people) {
     let selectedId = parseInt(promptFor("Enter ID to search:", nums));
-    let filteredResult = people.filter(function(person){
-        return person.id == selectedId;
-    });
-    return filteredResult;
+    if (selectedId > 100000000 && selectedId < 1000000000) {    
+        let filteredResult = people.filter(function(person){
+            return person.id === selectedId;
+        });
+        return filteredResult;
+    } else {
+        alert("Person ID is 9 numbers long.");
+        searchById(people);
+    }
 }
 // End of searchById()
 
@@ -470,9 +499,9 @@ function searchById(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByFirstName(people) {
-    let selectedFirstName = promptFor("Enter first name to search:", chars);
+    let selectedFirstName = promptFor("Enter first name to search:", chars).toLowerCase();
     let filteredResult = people.filter(function(person){
-        return person.firstName == selectedFirstName.toTitleCase();
+        return person.firstName.toLowerCase() === selectedFirstName;
     });
     return filteredResult;
 }
@@ -485,9 +514,9 @@ function searchByFirstName(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByLastName(people) {
-    let selectedLastName = promptFor("Enter last name to search:", chars);
+    let selectedLastName = promptFor("Enter last name to search:", chars).toLowerCase();
     let filteredResult = people.filter(function(person){
-        return person.lastName == selectedLastName;
+        return person.lastName.toLowerCase() === selectedLastName;
     });
     return filteredResult;
 }
@@ -500,11 +529,17 @@ function searchByLastName(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByGender(people) {
-    let selectedGender = promptFor("Enter gender to search:", chars);
-    let filteredResult = people.filter(function(person){
-        return person.gender == selectedGender;
-    });
-    return filteredResult;
+    let selectedGender = promptFor("Enter gender to search:", chars).toLowerCase();
+    let genders = ["male", "female", "nonbinary"]
+    if (genders.includes(selectedGender)){
+        let filteredResult = people.filter(function(person){
+            return person.gender === selectedGender;
+        });
+        return filteredResult;
+    } else {
+        alert(`Please enter one of the following genders: ${genders.join(", ")}`);
+        searchByGender(people);
+    }
 }
 // End of searchByGender()
 
@@ -517,7 +552,7 @@ function searchByGender(people) {
  function searchByDob(people) {
     let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search:", dates);  
     let filteredResult = people.filter(function(person){
-        return person.dob == selectedDob;
+        return person.dob === selectedDob;
     });
     return filteredResult;
 }
@@ -533,11 +568,11 @@ function searchByGender(people) {
     let selectedHeight = parseInt(promptFor("Enter height (inches) to search:", nums));
     if (selectedHeight > 0 && selectedHeight < 100) {
         let filteredResult = people.filter(function(person){
-            return person.height == selectedHeight;
+            return person.height === selectedHeight;
         });
         return filteredResult;
     } else {
-        alert("Height must be between 0 and 100 inches.");
+        alert("Please enter height between 0 and 100 inches.");
         return searchByHeight(people);
     }
 
@@ -554,11 +589,11 @@ function searchByGender(people) {
     let selectedWeight = parseInt(promptFor("Enter weight (lbs) to search:", nums)); 
     if (selectedWeight > 0 && selectedWeight < 500) {
         let filteredResult = people.filter(function(person){
-            return person.weight == selectedWeight;
+            return person.weight === selectedWeight;
             });
         return filteredResult; 
     } else {
-        alert("Weight must be between 0 and 500 lbs.");
+        alert("Please enter a weight between 0 and 500 lbs.");
         return searchByWeight(people); 
     }
 }
@@ -571,12 +606,17 @@ function searchByGender(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByEyeColor(people) {
-    let selectedEyeColor = promptFor("Enter eye color to search:", chars);
-
-    let filteredResult = people.filter(function(person){
-        return person.eyeColor == selectedEyeColor;
-    });
-    return filteredResult;
+    let selectedEyeColor = promptFor("Enter eye color to search:", chars).toLowerCase();
+    let eyeColors = ["brown", "hazel", "blue", "green", "gray", "amber"];
+    if (eyeColors.includes(selectedEyeColor)){ 
+        let filteredResult = people.filter(function(person) {
+            return person.eyeColor === selectedEyeColor;
+        });
+        return filteredResult;
+    } else {
+        alert(`Please enter one of the following natural eye colors: ${eyeColors.join(", ")}`);
+        return searchByEyeColor(people);
+    }
 }
 // End of searchByEyeColor()
 
@@ -587,9 +627,9 @@ function searchByGender(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByOccupation(people) {
-    let selectedOccupation = promptFor("Enter occupation to search:", chars);
+    let selectedOccupation = promptFor("Enter occupation to search:", chars).toLowerCase();
     let filteredResult = people.filter(function(person){
-        return person.occupation == selectedOccupation;
+        return person.occupation === selectedOccupation;
     });
     return filteredResult;
 }
@@ -602,14 +642,15 @@ function searchByGender(people) {
  * @returns {Array}             A collection of the fiiltered person objects.
  */
  function searchByParent(people) {
-    let selectedParent = parseInt(prompt("Enter parent id to search:", nums));  
+    let selectedParent = parseInt(promptFor("Enter parent id to search:", nums));  
+    // Include no parent.
     if (selectedParent > 100000000 && selectedParent < 1000000000) {
         let filteredResult = people.filter(function(person){
-            return person.parents.includes(parseInt(selectedParent));
+            return person.parents.includes(selectedParent);
         });
         return filteredResult;
     } else {
-        alert("Parent ID must be 9 numbers long.");
+        alert("Parent ID is 9 numbers long.");
         return searchByParent(people);
     }
 }
@@ -622,14 +663,15 @@ function searchByGender(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByCurrentSpouse(people) {
-    let selectedCurrentSpouse = parseInt(prompt("Enter current spouse id to search:", nums));
+    let selectedCurrentSpouse = parseInt(promptFor("Enter current spouse id to search:", nums));
+    // Include Null value
     if (selectedCurrentSpouse > 100000000 && selectedCurrentSpouse < 1000000000) {
         let filteredResult = people.filter(function(person){
-            return person.currentSpouse == parseInt(selectedCurrentSpouse);
+            return person.currentSpouse === selectedCurrentSpouse;
         });
         return filteredResult;
     } else {
-        alert("Current Spouse ID must be 9 numbers long.");
+        alert("Current Spouse ID is 9 numbers long.");
         return searchByCurrentSpouse(people);
     }    
 }
