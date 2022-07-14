@@ -134,7 +134,11 @@ function displayPeople(people) {
     let reFilter = parseInt(promptFor(`Search Results (Traits: ${traitCount.join(", ")})\n\n${results}Enter 0 to search an additional trait.`, nums)); 
     switch (true) {
         case (reFilter <= pCount && reFilter >= 0):
-            return reFilter;
+            if (traitCount.length < 5) {
+                return reFilter;
+            } else {
+                return displayPeople(people);
+            }
         default:
             return displayPeople(people);
     }
