@@ -128,9 +128,9 @@ function displayPeople(people) {
         results += `Enter ${i+1} to select ${people[i].firstName} ${people[i].lastName}\n`
         pCount++; // Refactor?
     }
-    let reFilter = parseInt(prompt(`Search Results\n\n${results}Enter 0 to search an additional trait.`)); 
+    let reFilter = parseInt(promptFor(`Search Results\n\n${results}Enter 0 to search an additional trait.`), nums); 
     switch (true) {
-        case (reFilter <= pCount && reFilter >= 0):  // Acts a form of validation. Can do another function
+        case (reFilter <= pCount && reFilter >= 0):  
             return reFilter;
         default:
             return displayPeople(people);
@@ -213,13 +213,37 @@ function chars(input) {
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
 
+/**
+ * This helper function checks to see if the value passed into input 
+ * can be converted into an integer.
+ * @param {String} input        A string that will be checked to see if it can be convreted into an integer.
+ * @returns {Boolean}           The result of our condition evaluation.
+ */
 function nums(input){
     return !isNaN(input) && Number.isInteger(Number(input));
 }
+// End of nums()
 
 /**
- * This helper function will be useful for STRINGIFYING a person-objects parents and spouse properties and 
- * determing siblings in order to easily send the information to the user in the form of an alert().
+ * This helper function checks to see if the value passed into input is a valid date.
+ * @param {String} input        A string that will be checked to see if it is a valid date.
+ * @returns {Boolean}           The result of ourr condition evaluation.
+ */
+function dates(input) {
+    // Is moment.js a better option for real-world operation?
+    let params = input.split(/[/]/);
+    let mm = Number(params[0]);
+    let dd = Number(params[1]);
+    let yyyy = Number(params[2]);
+    let date = new Date(yyyy,mm-1,dd,0,0,0,0);
+    return mm === date.getMonth()+1 && dd === date.getDate() && yyyy === date.getFullYear();
+}
+// End of dates()
+
+/**
+ * This helper function will be useful for STRINGIFYING a person-objects parents 
+ * and spouse properties and determing siblings in order to easily send the 
+ * information to the user in the form of an alert().
  * @param {Object} person       A singular object.
  * @param {Array} people        A collection of person objects.
  * @returns {String}            A string of the person's family (returns 'None' for empty properties).
@@ -234,8 +258,9 @@ function findPersonFamily(person, people){
 // End findPersonFamily()
 
 /**
- * This helper function will be useful for STRINGIFYING a person-objects parents property in order to 
- * easily send the information to the user in the form of an alert().
+ * This helper function will be useful for STRINGIFYING a person-objects 
+ * parents property in order to easily send the information to the user 
+ * in the form of an alert().
  * @param {Object} person       A singular object.
  * @param {Array} people        A collection of person objects.
  * @returns {String}            A string of the person's parents (returns 'None' for empty property).
@@ -254,8 +279,9 @@ function searchForParents(person, people){
 // End of searchForParents()
 
 /**
- * This helper function will be useful for STRINGIFYING a person-objects spouse property in order to
- * easily send the information to the user in the form of an alert().
+ * This helper function will be useful for STRINGIFYING a person-objects 
+ * spouse property in order to easily send the information to the user 
+ * in the form of an alert().
  * @param {Object} person       A singular object.
  * @param {Array} people        A collection of person objects.
  * @returns {String}            A string of the person's spouse (returns 'None' for empty property).
@@ -274,8 +300,9 @@ function searchForSpouse(person, people){
 // End of serachForSpouse()
 
 /**
- * This helper function will be useful for determining and STRINGIFYING a person-objects siblings in 
- * order to easily send the information to the user in the form of an alert().
+ * This helper function will be useful for determining and STRINGIFYING a 
+ * person-objects siblings in order to easily send the information to the 
+ * user in the form of an alert().
  * @param {Object} person       A singular objecct.
  * @param {Array} people        A collection of the person objects.
  * @returns {String}            A string of the person's siblings (returns 'None' if none are determined).
@@ -294,11 +321,12 @@ function searchForSiblings(person, people){
 // End of searchForSiblings()
 
 /**
- * This helper function will be useful for determining and STRINGIFYING a person-objects descendants in
- * order to easily send the information to the user in the form of an alert().
- * @param {Object} person     A singular object.
- * @param {Array} people      A collection of the person objects.
- * @returns {String}          A string of the person's descendants (returns 'None' if none are determined).
+ * This helper function will be useful for determining and STRINGIFYING a 
+ * person-objects descendants in order to easily send the information to 
+ * the user in the form of an alert().
+ * @param {Object} person       A singular object.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {String}            A string of the person's descendants (returns 'None' if none are determined).
  */
 let iCount = -1;
 let tempDescendants = [];
@@ -318,7 +346,7 @@ function findPersonDescendants(person, people){
         tempDescendants.length ? tempDescendants.push(descendants) : tempDescendants = descendants;
     }
     iCount++;
-    if (iCount == tempDescendants.length) { // Switch to case?
+    if (iCount === tempDescendants.length) { // Better as a switch?
         let personDescendants = [];
         // .flat() seems to only like being placed in format variable1 = variable2.flat(), not variable = variable.flat().
         tempDescendants.length ? personDescendants = tempDescendants.flat().map(function(el){return ` ${el.firstName} ${el.lastName}`;}) : personDescendants = "None";
@@ -332,9 +360,10 @@ function findPersonDescendants(person, people){
 
 let traitCount = []; // Add into functionality to keep track of trait count.
 /**
- * 
- * @param {Array} people 
- * @returns {}
+ * This function is used when searching the people collection by a 
+ * person-object's property/properties.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByTraits(people){
     let trait = promptFor("Do you want to search by 'id', 'firstname', 'lastname', 'gender', 'dob', 'height', 'weight', 'eyecolor', "
@@ -407,7 +436,7 @@ function searchByTraits(people){
         // Restart app() from the very beginning
         app(people);   
     } else if (traitCount.length <= 5) {
-        let reFilter = parseInt(displayPeople(filteredPeople)); // Can add another helper function num
+        let reFilter = displayPeople(filteredPeople);
         let arr = [] // rename
         switch (true) {
             case reFilter > 0:
@@ -421,12 +450,12 @@ function searchByTraits(people){
 // End of searchByTraits()
 
 /**
- * 
- * @param {Array} people 
- * @returns {}            
+ * This function is used when searching the people collection by the ID property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.           
  */
 function searchById(people) {
-    let selectedId = promptFor("Enter ID to search:", chars); // Change to function nums
+    let selectedId = parseInt(promptFor("Enter ID to search:", nums));
     let filteredResult = people.filter(function(person){
         return person.id == selectedId;
     });
@@ -435,23 +464,25 @@ function searchById(people) {
 // End of searchById()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This funtion is used when searching the people collection by the firstName
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByFirstName(people) {
-    let selectedFirstName = promptFor("Enter first name to search:", chars); //
+    let selectedFirstName = promptFor("Enter first name to search:", chars);
     let filteredResult = people.filter(function(person){
-        return person.firstName == selectedFirstName;
+        return person.firstName == selectedFirstName.toTitleCase();
     });
     return filteredResult;
 }
 // End of searchByFirstName()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the lastName
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByLastName(people) {
     let selectedLastName = promptFor("Enter last name to search:", chars);
@@ -463,9 +494,10 @@ function searchByLastName(people) {
 // End of searchByLastName()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the gender
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
 function searchByGender(people) {
     let selectedGender = promptFor("Enter gender to search:", chars);
@@ -477,12 +509,13 @@ function searchByGender(people) {
 // End of searchByGender()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the dob
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByDob(people) {
-    let selectedDob = prompt("Enter date of birth (format 02/21/1999) to search:"); //* Validate using another helper function: nums  
+    let selectedDob = promptFor("Enter date of birth (format 02/21/1999) to search:", dates);  
     let filteredResult = people.filter(function(person){
         return person.dob == selectedDob;
     });
@@ -491,44 +524,55 @@ function searchByGender(people) {
 // End of searchByDob()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the height
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByHeight(people) {
-    let selectedHeight = prompt("Enter height (inches) to search:"); //* Validate using another helper function: nums
-    let filteredResult = people.filter(function(person){
-        return person.height == selectedHeight;
-    });
-    return filteredResult;
+    let selectedHeight = parseInt(promptFor("Enter height (inches) to search:", nums));
+    if (selectedHeight > 0 && selectedHeight < 100) {
+        let filteredResult = people.filter(function(person){
+            return person.height == selectedHeight;
+        });
+        return filteredResult;
+    } else {
+        alert("Height must be between 0 and 100 inches.");
+        return searchByHeight(people);
+    }
+
 }
 // End of searchByHeight()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the weight
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByWeight(people) {
-    let selectedWeight = parseInt(promptFor("Enter weight (lbs) to search:", nums)); //* Validate using another helper function: nums
-    if (selectedWeight > 0) {
+    let selectedWeight = parseInt(promptFor("Enter weight (lbs) to search:", nums)); 
+    if (selectedWeight > 0 && selectedWeight < 500) {
         let filteredResult = people.filter(function(person){
             return person.weight == selectedWeight;
             });
         return filteredResult; 
     } else {
+        alert("Weight must be between 0 and 500 lbs.");
         return searchByWeight(people); 
     }
 }
 // End of searchByWeight()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the eyeColor
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByEyeColor(people) {
     let selectedEyeColor = promptFor("Enter eye color to search:", chars);
+
     let filteredResult = people.filter(function(person){
         return person.eyeColor == selectedEyeColor;
     });
@@ -537,9 +581,10 @@ function searchByGender(people) {
 // End of searchByEyeColor()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the 
+ * occupation property.
+ * @param {Array} people        A collection of the person objects. 
+ * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByOccupation(people) {
     let selectedOccupation = promptFor("Enter occupation to search:", chars);
@@ -551,29 +596,41 @@ function searchByGender(people) {
 // End of searchByOccupation()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the parents
+ * property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the fiiltered person objects.
  */
  function searchByParent(people) {
-    let selectedParent = prompt("Enter parent id to search:"); //* Validate using another helper function: numberForm to parseInt
-    let filteredResult = people.filter(function(person){
-        return person.parents.includes(parseInt(selectedParent));
-    });
-    return filteredResult;
+    let selectedParent = parseInt(prompt("Enter parent id to search:", nums));  
+    if (selectedParent > 100000000 && selectedParent < 1000000000) {
+        let filteredResult = people.filter(function(person){
+            return person.parents.includes(parseInt(selectedParent));
+        });
+        return filteredResult;
+    } else {
+        alert("Parent ID must be 9 numbers long.");
+        return searchByParent(people);
+    }
 }
 // End of searchByParent()
 
 /**
- * 
- * @param {Array} people 
- * @returns 
+ * This function is used when searching the people collection by the 
+ * currentSpouse property.
+ * @param {Array} people        A collection of the person objects.
+ * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByCurrentSpouse(people) {
-    let selectedCurrentSpouse = prompt("Enter current spouse id to search:"); //* Validate using another helper function: numberForm to parseInt
-    let filteredResult = people.filter(function(person){
-        return person.currentSpouse == parseInt(selectedCurrentSpouse);
-    });
-    return filteredResult;
+    let selectedCurrentSpouse = parseInt(prompt("Enter current spouse id to search:", nums));
+    if (selectedCurrentSpouse > 100000000 && selectedCurrentSpouse < 1000000000) {
+        let filteredResult = people.filter(function(person){
+            return person.currentSpouse == parseInt(selectedCurrentSpouse);
+        });
+        return filteredResult;
+    } else {
+        alert("Current Spouse ID must be 9 numbers long.");
+        return searchByCurrentSpouse(people);
+    }    
 }
 // End of searchByCurrentSpouse()
