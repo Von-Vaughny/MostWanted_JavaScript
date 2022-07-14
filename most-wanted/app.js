@@ -38,8 +38,6 @@ function app(people) {
             app(people);
             break;
     }
-    // Declares an unchangeable array of people.
-    const originalPeople = people;
     // Calls the mainMenu() only AFTER we find the SINGLE PERSON
     mainMenu(searchResults, people);
 }
@@ -199,20 +197,25 @@ function yesNo(input) {
  * This helper function operates as a default callback for promptFor's validation.
  * Feel free to modify this to suit your needs.
  * @param {String} input        A string that will be normalized via .toLowerCase().
- * @returns {Boolean}           Default validation -- no logic yet.
+ * @returns {Boolean}           The result of our condition evaluation.
  */
 function chars(input) {
+    // Need to add info, family, descendants. FIX - for property values or add one for people <---- or.... do for loop in a for loop.
     const personProperties = ["id", "firstName", "lastName", "gender", "dob", "height", "weight", "eyeColor", "occupation", "parents", "currentSpouse"]; 
     let properties = personProperties.map(function(property){
         return property.toLowerCase();
     });
-    return properties.includes(input.toLowerCase());
-    //return input.toLowerCase();
+    //return properties.includes(input.toLowerCase());
+    return input.toLowerCase();
 }
 // End of chars()
 
 //////////////////////////////////////////* End Of Starter Code *//////////////////////////////////////////
 // Any additional functions can be written below this line 👇. Happy Coding! 😁
+
+function nums(input){
+    return !isNaN(input) && Number.isInteger(Number(input));
+}
 
 /**
  * This helper function will be useful for STRINGIFYING a person-objects parents and spouse properties and 
@@ -315,7 +318,7 @@ function findPersonDescendants(person, people){
         tempDescendants.length ? tempDescendants.push(descendants) : tempDescendants = descendants;
     }
     iCount++;
-    if (iCount == tempDescendants.length) {
+    if (iCount == tempDescendants.length) { // Switch to case?
         let personDescendants = [];
         // .flat() seems to only like being placed in format variable1 = variable2.flat(), not variable = variable.flat().
         tempDescendants.length ? personDescendants = tempDescendants.flat().map(function(el){return ` ${el.firstName} ${el.lastName}`;}) : personDescendants = "None";
@@ -327,7 +330,7 @@ function findPersonDescendants(person, people){
 }
 // End of findPersonDescendants();
 
-let traitCount = []; 
+let traitCount = []; // Add into functionality to keep track of trait count.
 /**
  * 
  * @param {Array} people 
@@ -348,7 +351,7 @@ function searchByTraits(people){
             filteredPeople = searchByFirstName(filteredPeople);
             break;
         case "lastname":
-            // May return more than one person as last names are not all unique. // Can place in a dictionary?
+            // May return more than one person as last names are not all unique.
             if (!traitCount.includes("lastname")) {
                 traitCount.push("lastname");
                 filteredPeople = searchByLastName(filteredPeople);
@@ -404,8 +407,8 @@ function searchByTraits(people){
         // Restart app() from the very beginning
         app(people);   
     } else if (traitCount.length <= 5) {
-        let reFilter = parseInt(displayPeople(filteredPeople));
-        let arr = []
+        let reFilter = parseInt(displayPeople(filteredPeople)); // Can add another helper function num
+        let arr = [] // rename
         switch (true) {
             case reFilter > 0:
                 arr.push(filteredPeople[reFilter-1]);
@@ -423,7 +426,7 @@ function searchByTraits(people){
  * @returns {}            
  */
 function searchById(people) {
-    let selectedId = promptFor("Enter ID to search:", chars);
+    let selectedId = promptFor("Enter ID to search:", chars); // Change to function nums
     let filteredResult = people.filter(function(person){
         return person.id == selectedId;
     });
@@ -437,7 +440,7 @@ function searchById(people) {
  * @returns 
  */
 function searchByFirstName(people) {
-    let selectedFirstName = promptFor("Enter first name to search:", chars);
+    let selectedFirstName = promptFor("Enter first name to search:", chars); //
     let filteredResult = people.filter(function(person){
         return person.firstName == selectedFirstName;
     });
@@ -507,11 +510,15 @@ function searchByGender(people) {
  * @returns 
  */
  function searchByWeight(people) {
-    let selectedWeight = prompt("Enter weight (lbs) to search:"); //* Validate using another helper function: nums
-    let filteredResult = people.filter(function(person){
-        return person.weight == selectedWeight;
-    });
-    return filteredResult;
+    let selectedWeight = parseInt(promptFor("Enter weight (lbs) to search:", nums)); //* Validate using another helper function: nums
+    if (selectedWeight > 0) {
+        let filteredResult = people.filter(function(person){
+            return person.weight == selectedWeight;
+            });
+        return filteredResult; 
+    } else {
+        return searchByWeight(people); 
+    }
 }
 // End of searchByWeight()
 
