@@ -444,8 +444,13 @@ function searchByTraits(people){
             }
             break;
         case "currentspouse":
-            // Returns one person as current spouses are all unique.
-            filteredPeople = searchByCurrentSpouse(filteredPeople);
+            // May returns more than one person as multiple people have no spouse.
+            if (!traitCount.includes("currentspouse")) {
+                traitCount.push("currentspouse");
+                filteredPeople = searchByCurrentSpouse(filteredPeople);
+            } else {
+                alert("Trait 'currentspouse' has already been searched");
+            }
             break;
         case "quit":
             traitCount = [];
@@ -642,12 +647,18 @@ function searchByGender(people) {
  * @returns {Array}             A collection of the fiiltered person objects.
  */
  function searchByParent(people) {
-    let selectedParent = parseInt(promptFor("Enter parent id to search:", nums));  
-    // Include no parent.
-    if (selectedParent > 100000000 && selectedParent < 1000000000) {
-        let filteredResult = people.filter(function(person){
-            return person.parents.includes(selectedParent);
-        });
+    let selectedParent = parseInt(promptFor("Enter parent id (or 0 for no parent) to search:", nums));  
+    let filteredResult;
+    if ((selectedParent > 100000000 && selectedParent < 1000000000) || selectedParent == 0) {
+        if (selectedParent === 0) {
+            filteredResult = people.filter(function(person){
+                return person.parents.length === 0;
+            })
+        } else {
+            filteredResult = people.filter(function(person){
+                return person.parents.includes(selectedParent);
+            });
+        }
         return filteredResult;
     } else {
         alert("Parent ID is 9 numbers long.");
@@ -663,12 +674,18 @@ function searchByGender(people) {
  * @returns {Array}             A collection of the filtered person objects.
  */
  function searchByCurrentSpouse(people) {
-    let selectedCurrentSpouse = parseInt(promptFor("Enter current spouse id to search:", nums));
-    // Include Null value
-    if (selectedCurrentSpouse > 100000000 && selectedCurrentSpouse < 1000000000) {
-        let filteredResult = people.filter(function(person){
-            return person.currentSpouse === selectedCurrentSpouse;
-        });
+    let selectedCurrentSpouse = parseInt(promptFor("Enter current spouse id (or 0 for no current spouse) to search:", nums));
+    let filteredResult;
+    if ((selectedCurrentSpouse > 100000000 && selectedCurrentSpouse < 1000000000) || selectedCurrentSpouse === 0) {
+        if (selectedCurrentSpouse === 0) {
+            filteredResult = people.filter(function(person){
+                return person.currentSpouse === null;
+            });
+        } else {
+            filteredResult = people.filter(function(person){
+                return person.currentSpouse === selectedCurrentSpouse;
+            }); 
+        }
         return filteredResult;
     } else {
         alert("Current Spouse ID is 9 numbers long.");
